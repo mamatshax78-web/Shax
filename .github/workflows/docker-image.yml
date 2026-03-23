@@ -1,4 +1,3 @@
-    
 name: Shax Ultimate Hybrid Build
 
 on:
@@ -9,33 +8,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Kodni yuklab olish
-      uses: actions/checkout@v3
+      - name: Kodni yuklab olish
+        uses: actions/checkout@v3
 
-    - name: Brandingni sozlash
-      run: |
-        # Fayl borligini tekshirib, keyin o'zgartiradi
-        if [ -f web/public/index.html ]; then
-          sed -i 's/HollaEx/Shax Exchange/g' web/public/index.html
-          sed -i 's/#000000/#F3BA2F/g' web/public/index.html
-          echo "Frontend yangilandi."
-        else
-          echo "index.html topilmadi, bu qadam tashlab o'tildi."
-        fi
+      - name: Frontend Build
+        run: |
+          if [ -d "web" ]; then
+            cd web && npm install && npm run build
+          else
+            echo "Web papkasi topilmadi!"
+          fi
 
-    - name: Docker Image yig'ish
-      run: |
-        # Xatolik chiqsa ham to'xtab qolmasligi uchun
-        docker build . --file Dockerfile --tag shax-platform:latest || echo "Docker buildda muammo, lekin davom etamiz"
+      - name: GitHub Pages-ga yuklash
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./web/build
 
-    - name: Frontendni yig'ish (Build)
-      run: |
-        cd web
-        npm install
-        npm run build
-
-    - name: GitHub Pages-ga yuklash
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./web/build  # Yoki ./web/dist (loyihaga qarab)
+      - name: Docker Build
+        run: |
+          if [ -f "Dockerfile" ]; then
+            docker build . --file Dockerfile --tag shax:latest
+          else
+            echo "Dockerfile topilmadi, bu qadam o'tkazildi."
+          fi
+    
