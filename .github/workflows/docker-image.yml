@@ -27,3 +27,15 @@ jobs:
       run: |
         # Xatolik chiqsa ham to'xtab qolmasligi uchun
         docker build . --file Dockerfile --tag shax-platform:latest || echo "Docker buildda muammo, lekin davom etamiz"
+
+    - name: Frontendni yig'ish (Build)
+      run: |
+        cd web
+        npm install
+        npm run build
+
+    - name: GitHub Pages-ga yuklash
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./web/build  # Yoki ./web/dist (loyihaga qarab)
