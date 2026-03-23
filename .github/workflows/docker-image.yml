@@ -1,4 +1,4 @@
-name: Shax Ultimate Hybrid Build
+      name: Shax Full Build Fix
 
 on:
   push:
@@ -13,23 +13,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Kodni yuklab olish
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Frontend Build
-        run: |
-          if [ -d "web" ]; then
-            cd web
-            npm install --legacy-peer-deps || echo "Install failed"
-            npm run build || echo "Build failed, continuing anyway"
-          else
-            echo "Web papkasi topilmadi!"
-          fi
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-      - name: GitHub Pages-ga yuklash
+      - name: Build Platform
+        run: |
+          cd web
+          npm install --legacy-peer-deps
+          npm run build
+          # Agar 'build' papkasi chiqmasa, 'dist' ni tekshiramiz
+          if [ -d "dist" ]; then cp -r dist/. ../public_html || true; fi
+          if [ -d "build" ]; then cp -r build/. ../public_html || true; fi
+
+      - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./web/build
-          keep_files: true
-      
+          publish_dir: ./web/build # Bu papkani qayta tekshiramiz
+          publish_branch: gh-pages
