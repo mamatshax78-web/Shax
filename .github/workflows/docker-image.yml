@@ -1,0 +1,18 @@
+name: Shax Exchange Hybrid Build
+
+on:
+  push:
+    branches: [ "master" ] # Kod o'zgarganda avtomatik ishlaydi
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Docker Image yaratish
+      run: docker build . --file Dockerfile --tag shax-exchange:latest
+
+    - name: Tizimni tekshirish
+      run: echo "Shax Exchange platformasi muvaffaqiyatli yig'ildi!"
+    
