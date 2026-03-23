@@ -1,4 +1,4 @@
-      name: Shax Full Build Fix
+name: Shax Full Build Fix
 
 on:
   push:
@@ -26,13 +26,14 @@ jobs:
           cd web
           npm install --legacy-peer-deps
           npm run build
-          # Agar 'build' papkasi chiqmasa, 'dist' ni tekshiramiz
-          if [ -d "dist" ]; then cp -r dist/. ../public_html || true; fi
-          if [ -d "build" ]; then cp -r build/. ../public_html || true; fi
+          # Build natijasini tekshirish
+          if [ -d "dist" ]; then echo "Dist folder exists"; fi
+          if [ -d "build" ]; then echo "Build folder exists"; fi
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./web/build # Bu papkani qayta tekshiramiz
+          publish_dir: ./web/build
           publish_branch: gh-pages
+      
